@@ -1,0 +1,494 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Hybrid Cloud Portal</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://www.defiantjs.com/defiant.js/dist/defiant-latest.min.js"></script>
+    <script src="hcc.js"></script>
+    <script src="data_v1.js"></script>
+    <style>
+        body {
+
+            padding: 50px 0px 0px 0px;
+            background-color: rgb(128, 128, 128);
+        }
+
+        #container {
+
+            margin: auto;            
+            
+            height: 490px;
+            width: 80%;
+
+            background-color: rgb(0, 102, 161);
+        }
+
+        #footer {
+            
+            display: block;
+
+            position: absolute;
+            bottom: 102px;
+            width: 80%;
+
+        }
+
+        #data1 {
+            margin: auto;
+            position: absolute;
+    
+            top: 30%;
+            left: 20%;
+            margin-right: -50%;
+
+            height: 150px;
+            width: 60%;   
+        }
+
+        #logo {
+            
+            position: relative;
+            top: 10%;
+            
+            left: 10%;
+            right: 0px;
+
+        }
+
+        #logo img {
+            
+            position:relative;
+            display: inline;
+            
+            width: 30px;
+            height: 30px;
+        }
+
+        #logo h1 {
+            
+            position:relative;
+            display: inline;
+
+            left: 85px;
+
+            font-family: Arial;
+            font-size: xx-large;
+
+            font-weight: 300;
+            color: white;
+        }
+
+        #searchContainer
+        {
+            margin:auto;
+
+            position: relative;
+            width: 70%;
+            height: 50px;
+        }
+
+        #searchContainer div div span
+        {
+            float: left;
+            width: 90px;
+            height: 30px;
+        }
+
+        #searchContainer div div span number
+        {
+            width: 80px;
+            height: 30px;
+        }
+
+        #searchContainer div div span select
+        {
+            width: 80px;
+            height: 30px;
+        }
+
+
+
+        #searchContainer div div label
+        {
+            float: left;
+            width: 100px
+        }
+
+        #resultsContainer {
+    
+            margin: auto;
+            position: absolute;
+    
+            top: 10%;
+            left: 20%;
+            margin-right: -50%;
+            
+            width: 60%;
+            height: 460px;
+            overflow: scroll;
+            overflow-x: hidden;
+        }
+
+        #resultsContainer div {
+
+            position: relative;         // if set to absolute, only a single data row is displayed
+            width: 100%;
+        }
+        #resultsContainer div span {
+            
+            position: relative;
+            float: left;
+            width: 33%;
+            height: 200px;
+            background-color: white;
+            border: 1px solid #808080
+        }
+
+        #resultsContainer span img {
+        
+            border: none;
+            border-radius: 4px;
+            padding: 5px;
+
+            float: right;
+        }
+
+        #footer button {
+            
+            position: absolute;
+
+            right: 200px;
+            top: -100px;
+
+            
+        }
+
+        #footer img {
+
+            float: right;
+            
+            width: 150px;
+            height: 150px;
+
+            position: absolute;            
+            right: 0px;
+            bottom: 0px;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <!--
+        <div id="logo">
+            <img id="logo" src="../assets/compass logo.jpg" />
+            <h1>Hybrid Cloud Compass</h1>
+        </div>
+        -->
+        <!--<h2>Find Cloud Deals</h2>-->
+        <div id="searchContainer">
+            <img id="btnAddItem" src="../assets/plus.png" width="20" height="20" />
+        </div>
+
+            <div id="resultsContainer" class="results_colm">
+                <!-- // this is where the returned search results are displayed -->
+            </div>
+
+
+            <div id="data1">
+            </div>
+            <div id="data2">
+            </div>
+
+            <div id="footer">
+                <button id="btnSearch">Search</button>
+                <img id="compass" src="../assets/cloud computing compass.png" />
+            </div>
+
+        </div>
+
+
+        <script>
+
+            var addItem = 0;
+
+            function init() {
+                
+                var results = document.getElementById("resultsContainer");
+                var search = document.getElementById("searchContainer");
+
+                results.style.display = "none";
+
+                addItem++;
+                renderSearch(search, addItem);
+            }
+
+            window.onload = function () { init(); }
+
+            var demo = document.getElementById("btnAddItem");
+            var btnSearch = document.getElementById("btnSearch");
+
+            demo.onclick = function () { init(); }
+
+            btnSearch.onclick = function () {
+
+                this.style.display = "none";
+                var searchContainer = document.getElementById("searchContainer");
+                searchContainer.style.display = "none";
+
+                var results = document.getElementById("resultsContainer");
+                getSearchResults(results, "os", "Windows");
+                results.style.display = "block";
+
+            }
+
+            function renderSearch(container, clkIndex) {
+
+                //declare search objects
+                var objVcpu = {};
+                var objVram = {};
+                var objStorage = {};
+
+                //instantiate search object objVcpu element attributes
+                objVcpu.element = "input";
+                objVcpu.type = "number";
+                objVcpu.id = "s1vcpu" + clkIndex;
+                objVcpu.name = "s1vcpu";
+                objVcpu.min = "1";
+                objVcpu.max = "8";
+                objVcpu.step = "1";
+                objVcpu.value = "6";
+
+                //instantiate search object objVram element attributes
+                objVram.element = "input";
+                objVram.type = "number";
+                objVram.id = "s1vram" + clkIndex;
+                objVram.name = "s1vram";
+                objVram.min = "0";
+                objVram.max = "64";
+                objVram.step = "8";
+                objVram.value = "16";
+
+                //instantiate search object objStorage element attributes
+                objStorage.element = "input";
+                objStorage.type = "number";
+                objStorage.id = "s1Storage" + clkIndex;
+                objStorage.name = "s1Storage";
+                objStorage.min = "0";
+                objStorage.max = "800";
+                objStorage.step = "10";
+                objStorage.value = "400";
+
+                var searchItem = document.createElement("div");
+                searchItem.id = "searchItem_" + clkIndex;
+                //append element to container
+                container.appendChild(searchItem);
+
+                // element SearchOne div
+                var phSearchOne = document.createElement("div");
+                phSearchOne.id = "phSearchOne_" + clkIndex;
+                // append element to container
+                document.getElementById(searchItem.id).appendChild(phSearchOne);
+
+                var lblSearchOne = document.createElement("label");
+                lblSearchOne.id = "lblSearchOne_" + clkIndex;
+                lblSearchOne.innerText = "OS";
+                // append element to container
+                document.getElementById(phSearchOne.id).appendChild(lblSearchOne);
+
+                var ctSearchOne = document.createElement("span");
+                ctSearchOne.id = "ctSearchOne_" + clkIndex;
+                // append element to container
+                document.getElementById(phSearchOne.id).appendChild(ctSearchOne);
+
+                // element SearchTwo div
+                var phSearchTwo = document.createElement("div");
+                phSearchTwo.id = "phSearchTwo_" + clkIndex;
+                // append element to container
+                document.getElementById(searchItem.id).appendChild(phSearchTwo);
+
+                var lblSearchTwo = document.createElement("label");
+                lblSearchTwo.id = "lblSearchTwo_" + clkIndex;
+                lblSearchTwo.innerText = "vCPU";
+                // append element to container
+                document.getElementById(phSearchTwo.id).appendChild(lblSearchTwo);
+
+                var ctSearchTwo = document.createElement("span");
+                ctSearchTwo.id = "ctSearchTwo_" + clkIndex;
+                // append element to container
+                document.getElementById(phSearchTwo.id).appendChild(ctSearchTwo);
+
+                // element SearchThree div
+                var phSearchThree = document.createElement("div");
+                phSearchThree.id = "phSearchThree_" + clkIndex;
+                // append element to container
+                document.getElementById(searchItem.id).appendChild(phSearchThree);
+
+                var lblSearchThree = document.createElement("label");
+                lblSearchThree.id = "lblSearchThree_" + clkIndex;
+                lblSearchThree.innerText = "vRAM (GB)";
+                // append element to container
+                document.getElementById(phSearchThree.id).appendChild(lblSearchThree);
+
+                var ctSearchThree = document.createElement("span");
+                ctSearchThree.id = "ctSearchThree_" + clkIndex;
+                // append element to container
+                document.getElementById(phSearchThree.id).appendChild(ctSearchThree);
+
+                // element SearchFour div
+                var phSearchFour = document.createElement("div");
+                phSearchFour.id = "phSearchFour_" + clkIndex;
+                // append element to container
+                document.getElementById(searchItem.id).appendChild(phSearchFour);
+
+                var lblSearchFour = document.createElement("label");
+                lblSearchFour.id = "lblSearchFour_" + clkIndex;
+                lblSearchFour.innerText = "Storage (GB)";
+                // append element to container
+                document.getElementById(phSearchFour.id).appendChild(lblSearchFour);
+
+                var ctSearchFour = document.createElement("span");
+                ctSearchFour.id = "ctSearchFour_" + clkIndex;
+                // append element to container
+                document.getElementById(phSearchFour.id).appendChild(ctSearchFour);
+
+                //
+                document.getElementById(ctSearchOne.id).innerHTML = "<select id='cboOS" + clkIndex + "'><option value='osWindows'>Windows</option><option value='osLinux'>Linux</option></select>";
+                document.getElementById(ctSearchTwo.id).appendChild(scaffoldElement(objVcpu));
+                document.getElementById(ctSearchThree.id).appendChild(scaffoldElement(objVram));
+                document.getElementById(ctSearchFour.id).appendChild(scaffoldElement(objStorage));
+
+                //create element handle
+                var os = document.getElementById("cboOS" + clkIndex);
+                var cpu = document.getElementById(objVcpu.id);
+                var ram = document.getElementById(objVram.id);
+                var gb = document.getElementById(objStorage.id);
+
+                os.onchange = function () {
+
+                    var selOS = this.options[this.selectedIndex].value;
+
+                    var nodeName = os.id.substring(3, (os.id.length - 1)).toLowerCase();
+                    
+                    var nodeValue = selOS.substring(2);
+                    console.log("node name: " + nodeName + "/nnode value" + nodeValue);
+                    //return results
+           //         var data = document.getElementById("resultsContainer");
+           //         getSearchResults(data, nodeName, nodeValue);
+                }
+
+
+                cpu.onchange = function () {
+
+                    var nodeName = cpu.id.substring(2, (cpu.id.length - 1));
+                    var nodeValue = cpu.value;
+                    console.log("node name: " + nodeName + "/nnode value" + nodeValue);
+                    //return results
+             //       var data = document.getElementById("resultsContainer");
+             //       getSearchResults(data, nodeName, nodeValue);
+                }
+
+                ram.onchange = function () {
+
+                    var nodeName = ram.id.substring(2, (ram.id.length - 1));
+                    var nodeValue = ram.value;
+                    console.log("node name: " + nodeName + "/nnode value" + nodeValue);
+                    //return results
+               //     var data = document.getElementById("resultsContainer");
+               //     getSearchResults(data, nodeName, nodeValue);
+                }
+
+                gb.onchange = function () {
+
+                    var data = document.getElementById("data1");
+                    var nodeName = gb.id.substring(2, (gb.id.length - 1));
+                    var nodeValue = gb.value;
+                    console.log("node name: " + nodeName + "/nnode value" + nodeValue);
+                    //return results
+                 //   var data = document.getElementById("resultsContainer");
+                 //   getSearchResults(data, nodeName, nodeValue);
+                }
+            }
+
+            function scaffoldElement (objNode) {
+                var ele = document.createElement(objNode.element);
+                for (var prop in objNode) {
+                    if (objNode.hasOwnProperty(prop)) {
+                        ele[prop] = objNode[prop];
+                    }
+                }
+
+                return ele;
+            }
+
+            function getSearchResults(container, nodename, nodevalue) {
+
+                //obtain resultset
+                var rs = JSON.search(hccdata, "//" + nodename + "[contains(text(), '" + nodevalue + "')]/..");
+                var rsJSON = JSON.stringify(rs, null, '   ');
+                var objRsJSON = JSON.parse(rsJSON);
+
+                //
+                for (var i = 0; i < objRsJSON.length; i++) {
+                    var supplier = objRsJSON[i];
+                    if (supplier.supplier != undefined) {
+                        var resultsItem = document.createElement("div");
+                        resultsItem.id = "resultsItem_" + i;
+
+                        var resultsItem_Colm1 = document.createElement("span");
+                        resultsItem_Colm1.id = "resultsItem_Colm1_" + i;
+
+                        var resultsItem_Img = document.createElement("img");
+                        switch (supplier.supplier) {
+                            case "Azure":
+                                resultsItem_Img.src = "../assets/Azure_.png";
+                                resultsItem_Img.width = "111";
+                                resultsItem_Img.height = "80";
+                                break;
+                            case "AWS":
+                                resultsItem_Img.src = "../assets/aws-logo.jpg";
+                                resultsItem_Img.width = "111";
+                                resultsItem_Img.height = "80";
+                                break;
+                            case "Atos":
+                                resultsItem_Img.src = "../assets/atos-logo.png";
+                                resultsItem_Img.width = "111";
+                                resultsItem_Img.height = "80";
+                                break;
+                            default:
+                                resultsItem_Img.src = "../assets/placeholder.png";
+                                break;
+                        }
+
+                        var resultsItem_Colm2 = document.createElement("span");
+                        resultsItem_Colm2.id = "resultsItem_Colm2_" + i;
+
+                        resultsItem_Colm2.innerHTML = "<p>vCPU" + supplier.vcpu + "<br />RAM (GB)" + supplier.memory + "<br />Storage (GB)" + supplier.storage + "</p>";
+                        
+                        var resultsItem_Colm3 = document.createElement("span");
+                        resultsItem_Colm3.id = "resultsItem_Colm3_" + i;
+
+                        resultsItem_Colm3.innerHTML = "<p>" + supplier.cost + "</p>";
+
+                        //append element to DOM
+                        container.appendChild(resultsItem);
+
+                        document.getElementById(resultsItem.id).appendChild(resultsItem_Colm1);
+                        document.getElementById(resultsItem.id).appendChild(resultsItem_Colm2);
+                        document.getElementById(resultsItem.id).appendChild(resultsItem_Colm3);
+
+                        document.getElementById(resultsItem_Colm1.id).appendChild(resultsItem_Img);
+                    }
+                }
+            }
+
+        </script>
+
+</body>
+</html>
